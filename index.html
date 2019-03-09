@@ -1,0 +1,280 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div ng-app="myapp" ng-controller="myCtrl">
+
+        <!--Div que muestra las listas de canciones-->
+        <div id="verlistas">
+            Buscador de listas <br><input type="text" ng-model="search2"><br><br>
+            <div id="listas">
+                <h2>Introduce el nombre de la lista a crear<br></h2> <input type="text" ng-model="nombrelista"><button
+                    ng-click="crearLista()">Agregar una nueva lista vacia</button><br><br>
+
+
+            </div>
+
+            <style>
+                #listas {
+                        float: right;
+                        padding-right: 300px;
+                    }
+                </style>
+
+
+            <div>
+                <table>
+                    <tr>
+                        <td>ID</td>
+                        <td>Nombre</td>
+                        <td>Num canciones</td>
+                        <td>Duracion</td>
+                    </tr>
+                    <tr ng-repeat="x in listas | filter:{nombre:search2}">
+                        <td>{{x.id}}</td>
+                        <td>{{x.nombre}}</td>
+                        <td>{{calcularCanciones(x.canciones)}}</td>
+                        <td>{{calcularDuracion(x.canciones)}}</td>
+
+                        <td><button type="button" class="btn btn-primary" ng-model="x" ng-click="mostrarCanciones(x.canciones,x)">Canciones
+                                dentro de la lista</button></td>
+
+
+                        <td><button type="button" class="btn btn-Success" ng-click="buscarCanciones(x)">Agregar
+                                canciones a la lista</button></td>
+
+
+
+                        <td ng-click="removeList($index)" style="cursor:pointer"><button type="button" class="btn btn-danger">Borrar
+                                lista</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!--Div que muestra las canciones de una lista-->
+        <div id="mostrarcanciones" ng-show="showMostrar">
+
+            <br>
+            <br>
+            <h2>Estas son las canciones dentro de la lista</h2>
+            <div>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Autor</th>
+                        <th>Genero</th>
+                        <th>Duracion</th>
+                    </tr>
+                    <tr ng-repeat="x in cancionesLista | filter:{nombre:filtrar} | orderBy:order">
+                        <td>{{x.id}}</td>
+                        <td>{{x.nombre}}</td>
+                        <td>{{x.autor}}</td>
+                        <td>{{x.genero}}</td>
+                        <td>{{x.duracion}}</td>
+                        <td ng-click="removeSong($index,listaUsada)" style="cursor:pointer"><button type="button" class="btn btn-danger">Borrar
+                                canciones</button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!--Div que muestra todas las canciones disponibles para añadir a una lista-->
+        <div id="buscarcanciones" ng-show="showBuscar">
+
+            <h2>Estas canciones puedes añadirlas a las listas </h2>
+            <div>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Autor</th>
+                        <th>Genero</th>
+                        <th>Duracion</th>
+                    </tr>
+                    <tr ng-repeat="x in canciones | filter:{nombre:search} | orderBy:ordenar | limitTo:limite">
+                        <td>{{x.id}}</td>
+                        <td>{{x.nombre}}</td>
+                        <td>{{x.autor}}</td>
+                        <td>{{x.genero}}</td>
+                        <td>{{x.duracion}}</td>
+                        <td ng-click="addSong($index)" style="cursor:pointer"><button type="button" class="btn btn-info">Agregar
+                                esta cancion </button></td>
+
+                    </tr>
+                </table>
+                <br>
+                <button type="button" class="btn btn-Secondary" ng-click="masLimite()">Ver mas canciones</button>
+                <br> <br>
+                <button type="button" class="btn btn-Secondary" ng-click="menosLimite()">Ver menos canciones</button>
+
+
+
+
+
+                <div class="alert alert-success" role="alert">
+                    {{mensaje}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('myapp', []);
+        app.controller('myCtrl', function ($scope, $http) {
+
+            //Cargamos el JSON de canciones
+            $http.get("canciones.json").then(function (json) {
+                $scope.canciones = json.data;
+            });
+
+            //Cargamos el JSON de listas de reproducción
+            $http.get("listas.json").then(function (json) {
+                $scope.listas = json.data.listas;
+            });
+
+
+            //limitador
+            $scope.limite = 2;
+
+            //Mostrar mas
+            $scope.masLimite = function () {
+                $scope.limite++;
+            }
+
+            //Disminucion de mostrar menos
+            $scope.menosLimite = function () {
+                $scope.limite--;
+            }
+
+            //Eliminamos la lista marcada que es X
+            $scope.removeList = function (x) {
+                $scope.listas.splice(x, 1);
+            }
+
+            //Eliminamos la cancion marcada que es X de la lista Y
+            $scope.removeSong = function (x, y) {
+
+                $scope.listas[y].canciones.splice(x, 1);
+                $scope.cancionesLista.splice(x, 1);
+            }
+
+            //Guarda los datos de las canciones
+            $scope.pintarCanciones = function (x) {
+                var text = [];
+                for (var i = 0; i < x.length; i++) {
+                    for (var z = 0; z < $scope.canciones.length; z++) {
+                        if ($scope.canciones[z].nombre == x[i]) {
+                            text[i] = $scope.canciones[z];
+                        }
+                    }
+                }
+                return text;
+            }
+
+
+
+            //Funcion utilizada para agregar canciones a una lista, se pueden repetir canciones en una misma lista intencionalmente
+            $scope.addSong = function (x) {
+                $scope.listas[$scope.listaAgregar].canciones.push($scope.canciones[x].nombre);
+                $scope.mensaje = " Agregada con exito la cancion";
+
+            }
+
+            //Calculo de la duracion de las listas
+            $scope.calcularDuracion = function (x) {
+                var num = 0;
+                for (var i = 0; i < x.length; i++) {
+                    for (var z = 0; z < $scope.canciones.length; z++) {
+                        if ($scope.canciones[z].nombre == x[i]) {
+                            num += parseInt($scope.canciones[z].duracion);
+                        }
+                    }
+                }
+                return num;
+            }
+
+            // Div oculto que contiene las canciones
+            $scope.showBuscar = false;
+            $scope.showMostrar = false;
+
+            // Agregar canciones a la lista
+            $scope.buscarCanciones = function (x) {
+                $scope.showBuscar = !$scope.showBuscar;
+                for (var i = 0; i < $scope.listas.length; i++) {
+                    if ($scope.listas[i].nombre == x.nombre) {
+                        $scope.listaAgregar = i;
+                    }
+                }
+            }
+
+
+            //Funcion para cambiar el div a visible y mostrar las canciones
+            $scope.mostrarCanciones = function (x, y) {
+                $scope.showMostrar = !$scope.showMostrar;
+                $scope.cancionesLista = $scope.pintarCanciones(x);
+                for (var i = 0; i < $scope.listas.length; i++) {
+                    if ($scope.listas[i].nombre == y.nombre) {
+                        $scope.listaUsada = i;
+                        $scope.showMostrar = true;
+                    }
+                }
+            }
+
+
+
+            //Calculo de canciones en una lista
+            $scope.calcularCanciones = function (x) {
+                var numCanciones = x.length;
+                return numCanciones;
+            }
+
+
+
+
+
+            //Funcion para crear listas y determinar si ya existen, si existe una lista con el mismo nombre mostrará un mensaje de error.
+            $scope.crearLista = function () {
+                $scope.errorText = "";
+                var contador = 0;
+                if (!$scope.nombrelista) {
+                    return;
+                }
+                for (var i = 0; i < $scope.listas.length; i++) {
+                    if ($scope.listas[i].nombre.toLowerCase() == $scope.nombrelista.toLowerCase()) {
+                        contador++;
+                    }
+                }
+                if (contador == 0) {
+                    $scope.listas.push({
+                        id: $scope.listas.length,
+                        nombre: $scope.nombrelista,
+                        numCanciones: 0,
+                        duracion: 0,
+                        canciones: []
+                    });
+                }
+            }
+
+
+
+
+
+
+
+        });
+    </script>
+</body>
+
+</html>

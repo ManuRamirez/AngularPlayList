@@ -1,0 +1,36 @@
+[{
+        "id": "0",
+        "nombre": "The trooper",
+        "autor": "Iron Maiden",
+        "genero": "Speed metal",
+        "duracion": 60
+    },
+    {
+        "id": "1",
+        "nombre": "Nothing Else Matters",
+        "autor": "Metallica",
+        "genero": "Thrash Metal",
+        "duracion": 30
+    },
+    {
+        "id": "2",
+        "nombre": "Through the fire and flames",
+        "autor": "DragonForce",
+        "genero": "Power metal",
+        "duracion": 40
+    },
+    {
+        "id": "4",
+        "nombre": "Nymphetamine Fix",
+        "autor": "Cradle of Filth",
+        "genero": "Symphonic Metal",
+        "duracion": 20
+    },
+    {
+        "id": "5",
+        "nombre": "The Bard's Song - In The Forest",
+        "autor": "Blind Guardian",
+        "genero": "Power Metal",
+        "duracion": 20
+    }
+]

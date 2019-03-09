@@ -1,0 +1,39 @@
+{
+    "listas": [{
+            "id": "0",
+            "nombre": "Lista Heavy Metal",
+            "numcanciones": "",
+            "duracion": 0,
+            "canciones": ["The trooper", "Nothing Else Matters"]
+        },
+        {
+            "id": "1",
+            "nombre": "Lista Hard Rock",
+            "numcanciones": "",
+            "duracion": 0,
+            "canciones": ["Through the fire and flames"]
+        },
+        {
+            "id": "2",
+            "nombre": "Lista Musica Clasica",
+            "numcanciones": "",
+            "duracion": 0,
+            "canciones": ["The trooper", "Nymphetamine Fix"]
+        },
+        {
+            "id": "3",
+            "nombre": "Lista J-Pop",
+            "numcanciones": "",
+            "duracion": 0,
+            "canciones": ["The Bard's Song - In The Forest", "Nothing Else Matters"]
+        },
+        {
+            "id": "4",
+            "nombre": "Lista Jazz",
+            "numcanciones": "",
+            "duracion": 0,
+            "canciones": []
+        }
+
+    ]
+}

@@ -1,0 +1,24 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body>
+    
+
+    <script>
+        var app = angular.module('myapp', []);
+        app.controller('myCtrl', function ($scope, $http) {
+            $http.get("listas.json").then(function (json) {
+                $scope.listas = json.data.listas;
+            });
+            $scope.removeItem = function(x){
+                $scope.errorText = "";
+                $scope.listas.splice(x,1);
+            }
+        });
+    </script>
+</body>
+
+</html>
